@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bf68ln1ue5nfr"
-path="res://.godot/imported/eyelashes01.png-be9ab8960185c1f3bceba1f17b9c065b.ctex"
+path="res://.godot/imported/eyelashes01.png-cda60b25c6185d0977676f8e429c31f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://example/remote_input/thumbnails/eyelashes01.png"
-dest_files=["res://.godot/imported/eyelashes01.png-be9ab8960185c1f3bceba1f17b9c065b.ctex"]
+source_file="res://remote_input/thumbnails/eyelashes01.png"
+dest_files=["res://.godot/imported/eyelashes01.png-cda60b25c6185d0977676f8e429c31f8.ctex"]
 
 [params]
 

@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://cobhie2abg27m"
-path="res://.godot/imported/Crude_Tank_Top.obj-7f85c0d03820db76a9e3fd3662fe8a95.mesh"
+path="res://.godot/imported/Crude_Tank_Top.obj-f72d000fc6cc7da5f1443950f882422a.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Crude_Tank_Top.obj-7f85c0d03820db76a9e3fd3662fe8a95.mesh"]
+files=["res://.godot/imported/Crude_Tank_Top.obj-f72d000fc6cc7da5f1443950f882422a.mesh"]
 
-source_file="res://example/remote_input/clothes/Crude_Tank_Top/Crude_Tank_Top.obj"
-dest_files=["res://.godot/imported/Crude_Tank_Top.obj-7f85c0d03820db76a9e3fd3662fe8a95.mesh", "res://.godot/imported/Crude_Tank_Top.obj-7f85c0d03820db76a9e3fd3662fe8a95.mesh"]
+source_file="res://remote_input/clothes/Crude_Tank_Top/Crude_Tank_Top.obj"
+dest_files=["res://.godot/imported/Crude_Tank_Top.obj-f72d000fc6cc7da5f1443950f882422a.mesh", "res://.godot/imported/Crude_Tank_Top.obj-f72d000fc6cc7da5f1443950f882422a.mesh"]
 
 [params]
 

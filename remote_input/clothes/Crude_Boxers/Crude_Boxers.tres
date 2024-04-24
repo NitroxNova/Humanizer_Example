@@ -7,4 +7,4 @@ resource_name = "Crude_Boxers"
 script = ExtResource("1_6wh6s")
 slots = Array[String]([])
 textures = {}
-path = "res://example/remote_input/clothes/Crude_Boxers"
+path = "res://remote_input/clothes/Crude_Boxers"

@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://dy3y4b4uv2mjn"
-path="res://.godot/imported/Crude_Boxers.obj-4913b6ed824905b8ddaee5c9147e5e7b.mesh"
+path="res://.godot/imported/Crude_Boxers.obj-e6b5993ea00a1a27ae26530c77172ce8.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Crude_Boxers.obj-4913b6ed824905b8ddaee5c9147e5e7b.mesh"]
+files=["res://.godot/imported/Crude_Boxers.obj-e6b5993ea00a1a27ae26530c77172ce8.mesh"]
 
-source_file="res://example/remote_input/clothes/Crude_Boxers/Crude_Boxers.obj"
-dest_files=["res://.godot/imported/Crude_Boxers.obj-4913b6ed824905b8ddaee5c9147e5e7b.mesh", "res://.godot/imported/Crude_Boxers.obj-4913b6ed824905b8ddaee5c9147e5e7b.mesh"]
+source_file="res://remote_input/clothes/Crude_Boxers/Crude_Boxers.obj"
+dest_files=["res://.godot/imported/Crude_Boxers.obj-e6b5993ea00a1a27ae26530c77172ce8.mesh", "res://.godot/imported/Crude_Boxers.obj-e6b5993ea00a1a27ae26530c77172ce8.mesh"]
 
 [params]
 
