@@ -41,13 +41,13 @@ func build_menu():
 	#humanizer.reset_human()
 	humanizer.set_skin_texture(\"middleage_caucasian_male\")
 	humanizer.set_shapekeys({gender=1})
-	humanizer.adjust_skeleton()
 	#print(registry.body_parts.RightEye[\"RightEye-LowPolyEyeball\"])
 	humanizer.set_body_part(registry.body_parts.LeftEye[\"LeftEyeBall-LowPoly\"])
 	humanizer.set_body_part(registry.body_parts.RightEye[\"RightEyeball-LowPoly\"])
 	humanizer.apply_clothes(load(\"res://remote_input/clothes/Crude_Boxers/Crude_Boxers.tres\"))
 	humanizer.apply_clothes(load(\"res://remote_input/clothes/Crude_Tank_Top/Crude_Tank_Top.tres\"))
 	humanizer.hide_body_vertices()
+	
 	var shapekey_categories = HumanizerUtils.get_shapekey_categories()
 	for category_name in shapekey_categories:
 		var category_keys = {}
@@ -153,7 +153,6 @@ func set_shapekeys(shapekey_values:Dictionary):
 	#print(\"setting shapekeys\")
 	#print(shapekey_values)
 	humanizer.set_shapekeys(shapekey_values)
-	humanizer.adjust_skeleton()
 	get_camera_min_max()
 	_on_zoom_slider_value_changed($Split_Screen/Right_Side/Right_Side/zoom_slider.value)
 
@@ -168,9 +167,14 @@ func _on_zoom_slider_value_changed(value):
 		camera.v_offset = ((zoom_out_offset-zoom_mid_offset) * ((invr_value-zoom_mid_ratio)/(1-zoom_mid_ratio))) + zoom_mid_offset
 	
 	
+func _on_next_pressed():
+	humanizer.set_component_state(true,&'main_collider')
+	humanizer.standard_bake()
+	humanizer.save_human_scene(true)
+	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_pyj8x"]
+[sub_resource type="Resource" id="Resource_it8kh"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -754,13 +758,14 @@ shapekeys = {
 "universal-male-young-minmuscle-minweight": 0,
 "weight": 0.5
 }
-components = []
+components = [&"main_collider"]
 body_parts = {}
 body_part_materials = {}
 clothes = []
 clothes_materials = {}
 skin_color = Color(1, 1, 1, 1)
 eye_color = Color(0.529412, 0.807843, 0.921569, 1)
+eyebrow_color = Color(0, 0, 0, 1)
 hair_color = Color(0.501961, 0, 0, 1)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_f0duq"]
@@ -815,7 +820,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_pyj8x")
+human_config = SubResource("Resource_it8kh")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
@@ -859,7 +864,7 @@ max_value = 1.0
 step = 0.01
 allow_greater = true
 
-[node name="Button" type="Button" parent="Split_Screen/Right_Side/Right_Side"]
+[node name="Next" type="Button" parent="Split_Screen/Right_Side/Right_Side"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "  Next  "
@@ -868,3 +873,4 @@ text = "  Next  "
 layout_mode = 2
 
 [connection signal="value_changed" from="Split_Screen/Right_Side/Right_Side/zoom_slider" to="." method="_on_zoom_slider_value_changed"]
+[connection signal="pressed" from="Split_Screen/Right_Side/Right_Side/Next" to="." method="_on_next_pressed"]
