@@ -18,6 +18,7 @@ var zoom_in_size = .25
 var zoom_out_size = 3
 var zoom_mid_ratio = 0
 var zoom_mid_offset = 0
+var eyebrow_menu_options = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -27,6 +28,7 @@ func _ready():
 	camera.v_offset = zoom_out_offset
 	camera.size = zoom_out_size
 	build_menu()
+	eyebrow_selected(11)
 	get_camera_min_max()
 
 func get_camera_min_max():
@@ -124,6 +126,8 @@ func build_menu():
 		#print(id)
 		var icon = load(\"res://remote_input/thumbnails/eyebrow\"+id+\".png\")
 		eyebrow_options.add_icon_item(icon,\"\")
+		eyebrow_menu_options.append(eyebrow_name)
+	eyebrow_options.item_selected.connect(eyebrow_selected)
 		
 	
 	var details_panel = ScrollContainer.new()
@@ -157,6 +161,13 @@ func set_shapekeys(shapekey_values:Dictionary):
 	get_camera_min_max()
 	_on_zoom_slider_value_changed($Split_Screen/Right_Side/Right_Side/zoom_slider.value)
 
+func eyebrow_selected(option_id:int):
+	#print(eyebrow_menu_options[option_id])
+	var eyebrow_name = eyebrow_menu_options[option_id]
+	humanizer.set_body_part(registry.body_parts.RightEyebrow[eyebrow_name])
+	eyebrow_name = eyebrow_name.replace(\"Right\",\"Left\")
+	humanizer.set_body_part(registry.body_parts.LeftEyebrow[eyebrow_name])
+	
 
 #smooth zoom, so nice wow
 func _on_zoom_slider_value_changed(value):
@@ -176,7 +187,7 @@ func _on_next_pressed():
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_uj6k0"]
+[sub_resource type="Resource" id="Resource_uq4sy"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -822,7 +833,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_uj6k0")
+human_config = SubResource("Resource_uq4sy")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
