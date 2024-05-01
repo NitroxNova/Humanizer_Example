@@ -44,8 +44,9 @@ func build_menu():
 	#print(registry.body_parts.RightEye[\"RightEye-LowPolyEyeball\"])
 	humanizer.set_body_part(registry.body_parts.LeftEye[\"LeftEyeBall-LowPoly\"])
 	humanizer.set_body_part(registry.body_parts.RightEye[\"RightEyeball-LowPoly\"])
-	humanizer.apply_clothes(load(\"res://remote_input/clothes/Crude_Boxers/Crude_Boxers.tres\"))
-	humanizer.apply_clothes(load(\"res://remote_input/clothes/Crude_Tank_Top/Crude_Tank_Top.tres\"))
+	#print(registry.clothes.Crude_Tank_Top)
+	humanizer.apply_clothes(registry.clothes.Crude_Tank_Top)
+	humanizer.apply_clothes(registry.clothes.Crude_Boxers)
 	humanizer.hide_body_vertices()
 	
 	var shapekey_categories = HumanizerUtils.get_shapekey_categories()
@@ -169,12 +170,13 @@ func _on_zoom_slider_value_changed(value):
 	
 func _on_next_pressed():
 	humanizer.set_component_state(true,&'main_collider')
-	humanizer.standard_bake()
+	## you will want to bake in a real game, but it takes more time to generate
+	#humanizer.standard_bake()
 	humanizer.save_human_scene(true)
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_it8kh"]
+[sub_resource type="Resource" id="Resource_uj6k0"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -820,7 +822,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_it8kh")
+human_config = SubResource("Resource_uj6k0")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
