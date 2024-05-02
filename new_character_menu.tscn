@@ -19,6 +19,11 @@ var zoom_out_size = 3
 var zoom_mid_ratio = 0
 var zoom_mid_offset = 0
 var eyebrow_menu_options = []
+var skin_shader : ShaderMaterial = load(\"res://skin_color_shader.tres\")
+var age = 50
+var gender = \"male\"
+var skin_color_ratio = 0.0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -41,7 +46,8 @@ func get_camera_min_max():
 func build_menu():
 	var skin_textures = HumanizerRegistry.skin_textures
 	#humanizer.reset_human()
-	humanizer.set_skin_texture(\"middleage_caucasian_male\")
+	#humanizer.set_skin_texture(\"middleage_caucasian_male\")
+	humanizer.get_node(\"Human\").set_surface_override_material(0,skin_shader)
 	humanizer.set_shapekeys({gender=1})
 	#print(registry.body_parts.RightEye[\"RightEye-LowPolyEyeball\"])
 	humanizer.set_body_part(registry.body_parts.LeftEye[\"LeftEyeBall-LowPoly\"])
@@ -50,6 +56,7 @@ func build_menu():
 	humanizer.apply_clothes(registry.clothes.Crude_Tank_Top)
 	humanizer.apply_clothes(registry.clothes.Crude_Boxers)
 	humanizer.hide_body_vertices()
+	update_skin_texture()
 	
 	var shapekey_categories = HumanizerUtils.get_shapekey_categories()
 	for category_name in shapekey_categories:
@@ -80,6 +87,20 @@ func build_menu():
 	dropdown.add_item(\"Female\")
 	dropdown.item_selected.connect(gender_changed)
 	main_vbox.add_child(dropdown)
+	
+	label = Label.new()
+	label.text = \"Skin Color\"
+	main_vbox.add_child(label)
+	var skin_gradient_box = TextureRect.new()
+	skin_gradient_box.custom_minimum_size.y = 50
+	skin_gradient_box.texture = GradientTexture1D.new()
+	skin_gradient_box.texture.gradient = Gradient.new()
+	skin_gradient_box.texture.gradient.colors[0] = Color(0.812,0.627,0.514)
+	skin_gradient_box.texture.gradient.colors[1] = Color(0.408,0.231,0.165)
+	main_vbox.add_child(skin_gradient_box)
+	var skin_color_slider = HSlider.new()
+	skin_color_slider.value_changed.connect(skin_color_slider_changed)
+	main_vbox.add_child(skin_color_slider)
 
 	var category_keys = shapekey_categories[\"Macro\"]	
 	for key_name in category_keys:
@@ -147,16 +168,69 @@ func build_menu():
 			slider.change_shapekeys.connect(set_shapekeys)
 			details_vbox.add_child(slider)
 
+func update_skin_texture():
+	var ratios = get_skin_color_ratios()
+	skin_shader.set_shader_parameter(\"skin_ratios\",ratios)
+	#print(ratios)
+
+func get_skin_color_ratios():
+	var ratios = []
+	ratios.resize(12)
+	ratios.fill(1)
+	var light_ratio = (100-skin_color_ratio)/100.0
+	var dark_ratio = skin_color_ratio/100.0
+	
+	if gender == \"male\":
+		ratios = multiply_arrays(ratios,[1,1,1,0,0,0,1,1,1,0,0,0])
+	else:
+		ratios = multiply_arrays(ratios,[0,0,0,1,1,1,0,0,0,1,1,1])
+		
+	var age_ranges = [0.0,50.0,100.0]
+	if age < age_ranges[1]:
+		var upper_age = age/age_ranges[1]
+		var lower_age = 1 - upper_age
+		ratios = multiply_arrays(ratios,[lower_age,upper_age,0,lower_age,upper_age,0,lower_age,upper_age,0,lower_age,upper_age,0])
+	else:
+		var upper_age = (age-age_ranges[1])/(age_ranges[2]-age_ranges[1])
+		var lower_age = 1 - upper_age
+		ratios = multiply_arrays(ratios,[0,lower_age,upper_age,0,lower_age,upper_age,0,lower_age,upper_age,0,lower_age,upper_age])
+		
+	ratios = multiply_arrays(ratios,[light_ratio,light_ratio,light_ratio,light_ratio,light_ratio,light_ratio,dark_ratio,dark_ratio,dark_ratio,dark_ratio,dark_ratio,dark_ratio])
+	return ratios
+	
+func skin_color_slider_changed(value:float):
+	#print(\"skin color changed \" + str(value))
+	skin_color_ratio = value
+	update_skin_texture()
+
+
+func multiply_arrays(array1:Array,array2:Array):
+	if not array1.size() == array2.size():
+		printerr(\"cant multiply arrays of different lengths\")
+		return null
+	else:
+		var output = []
+		for i in array1.size():
+			output.append(array1[i] * array2[i])
+		return output
+
 func gender_changed(option_id:int):
 	if option_id == 0:
 		set_shapekeys({gender=1})
+		gender = \"male\"
 	else:
 		set_shapekeys({gender=0})
+		gender = \"female\"
+	update_skin_texture()
 		
 
 func set_shapekeys(shapekey_values:Dictionary):
 	#print(\"setting shapekeys\")
 	#print(shapekey_values)
+	for sk_name in shapekey_values:
+		if sk_name == \"age\":
+			age = shapekey_values[sk_name] * 100
+			update_skin_texture()
 	humanizer.set_shapekeys(shapekey_values)
 	get_camera_min_max()
 	_on_zoom_slider_value_changed($Split_Screen/Right_Side/Right_Side/zoom_slider.value)
@@ -180,6 +254,21 @@ func _on_zoom_slider_value_changed(value):
 	
 	
 func _on_next_pressed():
+	var save_material = StandardMaterial3D.new()
+	var save_texture_image = Image.create(2**11,2**11,true,Image.FORMAT_RGB8)
+	var ratios = get_skin_color_ratios()
+	var textures = []
+	for tex in skin_shader.get_shader_parameter(\"skin_textures\"):
+		textures.append(tex.get_image())
+	for x in save_texture_image.get_width():
+		for y in save_texture_image.get_height():
+			var color = Color.BLACK
+			for r in ratios.size():
+				if ratios[r] > 0.0:
+					color += textures[r].get_pixel(x,y) * ratios[r]
+			save_texture_image.set_pixel(x,y,color)
+	save_material.albedo_texture = ImageTexture.create_from_image(save_texture_image)
+	humanizer.get_node(\"Human\").set_surface_override_material(0,save_material)
 	humanizer.set_component_state(true,&'main_collider')
 	## you will want to bake in a real game, but it takes more time to generate
 	#humanizer.standard_bake()
@@ -187,7 +276,7 @@ func _on_next_pressed():
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_uq4sy"]
+[sub_resource type="Resource" id="Resource_lrv8i"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -833,7 +922,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_uq4sy")
+human_config = SubResource("Resource_lrv8i")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
