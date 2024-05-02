@@ -52,6 +52,8 @@ func build_menu():
 	#print(registry.body_parts.RightEye[\"RightEye-LowPolyEyeball\"])
 	humanizer.set_body_part(registry.body_parts.LeftEye[\"LeftEyeBall-LowPoly\"])
 	humanizer.set_body_part(registry.body_parts.RightEye[\"RightEyeball-LowPoly\"])
+	humanizer.set_body_part(registry.body_parts.LeftEyelash[\"LeftEyelash\"])
+	humanizer.set_body_part(registry.body_parts.RightEyelash[\"RightEyelash\"])
 	#print(registry.clothes.Crude_Tank_Top)
 	humanizer.apply_clothes(registry.clothes.Crude_Tank_Top)
 	humanizer.apply_clothes(registry.clothes.Crude_Boxers)
@@ -267,6 +269,7 @@ func _on_next_pressed():
 				if ratios[r] > 0.0:
 					color += textures[r].get_pixel(x,y) * ratios[r]
 			save_texture_image.set_pixel(x,y,color)
+	save_texture_image.generate_mipmaps()
 	save_material.albedo_texture = ImageTexture.create_from_image(save_texture_image)
 	humanizer.get_node(\"Human\").set_surface_override_material(0,save_material)
 	humanizer.set_component_state(true,&'main_collider')
@@ -276,7 +279,7 @@ func _on_next_pressed():
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_lrv8i"]
+[sub_resource type="Resource" id="Resource_win2c"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -922,7 +925,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_lrv8i")
+human_config = SubResource("Resource_win2c")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
