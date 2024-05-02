@@ -103,7 +103,16 @@ func build_menu():
 	var skin_color_slider = HSlider.new()
 	skin_color_slider.value_changed.connect(skin_color_slider_changed)
 	main_vbox.add_child(skin_color_slider)
-
+	label = Label.new()
+	label.text = \"Skin Tone\"
+	main_vbox.add_child(label)
+	var skin_tone_picker = ColorPickerButton.new()
+	skin_tone_picker.color = Color.WHITE
+	skin_tone_picker.edit_alpha = false
+	skin_tone_picker.custom_minimum_size = Vector2(50,50)
+	skin_tone_picker.color_changed.connect(skin_tone_color_changed)
+	main_vbox.add_child(skin_tone_picker)
+	
 	var category_keys = shapekey_categories[\"Macro\"]	
 	for key_name in category_keys:
 		var slider = load(\"res://shapekey_slider.tscn\").instantiate()
@@ -138,10 +147,25 @@ func build_menu():
 	label = Label.new()
 	label.text = \"Eye Color\"
 	hair_vbox.add_child(label)
+	var eye_color_picker = ColorPickerButton.new()
+	eye_color_picker.color = Color.SKY_BLUE
+	eye_color_picker.edit_alpha = false
+	eye_color_picker.custom_minimum_size = Vector2(50,50)
+	eye_color_picker.color_changed.connect(eye_color_changed)
+	hair_vbox.add_child(eye_color_picker)
 	label = Label.new()
 	label.text = \"Hair Color\"
 	hair_vbox.add_child(label)
+	var hair_color_picker = ColorPickerButton.new()
+	hair_color_picker.color = Color.WEB_MAROON
+	hair_color_picker.edit_alpha = false
+	hair_color_picker.custom_minimum_size = Vector2(50,50)
+	hair_color_picker.color_changed.connect(hair_color_changed)
+	hair_vbox.add_child(hair_color_picker)
 	
+	label = Label.new()
+	label.text = \"Eyebrows\"
+	hair_vbox.add_child(label)
 	var eyebrow_options = OptionButton.new()
 	hair_vbox.add_child(eyebrow_options)
 	for eyebrow_name : String in registry.body_parts.RightEyebrow:
@@ -150,7 +174,20 @@ func build_menu():
 		var icon = load(\"res://remote_input/thumbnails/eyebrow\"+id+\".png\")
 		eyebrow_options.add_icon_item(icon,\"\")
 		eyebrow_menu_options.append(eyebrow_name)
+	eyebrow_options.selected = 11
 	eyebrow_options.item_selected.connect(eyebrow_selected)
+	
+	label = Label.new()
+	label.text = \"Eyelashes\"
+	hair_vbox.add_child(label)
+	var eyelash_options = OptionButton.new()
+	hair_vbox.add_child(eyelash_options)
+	for i in 4:
+		var id:String = str(0)+str(i+1)
+		var icon = load(\"res://remote_input/thumbnails/eyelashes\"+id+\".png\")
+		eyelash_options.add_icon_item(icon,\"\")
+	eyelash_options.item_selected.connect(eyelash_selected)
+		
 		
 	
 	var details_panel = ScrollContainer.new()
@@ -205,6 +242,14 @@ func skin_color_slider_changed(value:float):
 	skin_color_ratio = value
 	update_skin_texture()
 
+func skin_tone_color_changed(color:Color):
+	skin_shader.set_shader_parameter(\"albedo\",color)
+
+func eye_color_changed(color:Color):
+	humanizer.eye_color = color
+
+func hair_color_changed(color:Color):
+	humanizer.hair_color = color
 
 func multiply_arrays(array1:Array,array2:Array):
 	if not array1.size() == array2.size():
@@ -243,7 +288,18 @@ func eyebrow_selected(option_id:int):
 	humanizer.set_body_part(registry.body_parts.RightEyebrow[eyebrow_name])
 	eyebrow_name = eyebrow_name.replace(\"Right\",\"Left\")
 	humanizer.set_body_part(registry.body_parts.LeftEyebrow[eyebrow_name])
-	
+
+func eyelash_selected(option_id:int):
+	var left_eyelash_name = \"LeftEyelash\"
+	var right_eyelash_name = \"RightEyelash\"
+	if option_id < 3:
+		pass
+	else:
+		left_eyelash_name = \"FalseLeftEyelash\"
+		right_eyelash_name = \"FalseRightEyelash\"
+			
+	humanizer.set_body_part(registry.body_parts.LeftEyelash[left_eyelash_name])
+	humanizer.set_body_part(registry.body_parts.RightEyelash[right_eyelash_name])
 
 #smooth zoom, so nice wow
 func _on_zoom_slider_value_changed(value):
@@ -257,6 +313,7 @@ func _on_zoom_slider_value_changed(value):
 	
 func _on_next_pressed():
 	var save_material = StandardMaterial3D.new()
+	save_material.albedo_color = skin_shader.get_shader_parameter(\"albedo\")
 	var save_texture_image = Image.create(2**11,2**11,true,Image.FORMAT_RGB8)
 	var ratios = get_skin_color_ratios()
 	var textures = []
@@ -269,6 +326,7 @@ func _on_next_pressed():
 				if ratios[r] > 0.0:
 					color += textures[r].get_pixel(x,y) * ratios[r]
 			save_texture_image.set_pixel(x,y,color)
+	
 	save_texture_image.generate_mipmaps()
 	save_material.albedo_texture = ImageTexture.create_from_image(save_texture_image)
 	humanizer.get_node(\"Human\").set_surface_override_material(0,save_material)
@@ -279,7 +337,7 @@ func _on_next_pressed():
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_win2c"]
+[sub_resource type="Resource" id="Resource_qks5v"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -925,7 +983,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_win2c")
+human_config = SubResource("Resource_qks5v")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
