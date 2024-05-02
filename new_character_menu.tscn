@@ -19,6 +19,7 @@ var zoom_out_size = 3
 var zoom_mid_ratio = 0
 var zoom_mid_offset = 0
 var eyebrow_menu_options = []
+var hair_menu_options = []
 var skin_shader : ShaderMaterial = load(\"res://skin_color_shader.tres\")
 var age = 50
 var gender = \"male\"
@@ -164,6 +165,21 @@ func build_menu():
 	hair_vbox.add_child(hair_color_picker)
 	
 	label = Label.new()
+	label.text = \"Hair Style\"
+	hair_vbox.add_child(label)
+	var hair_options = OptionButton.new()
+	hair_vbox.add_child(hair_options)
+	var icon = load(\"res://remote_input/thumbnails/hair/none.png\")
+	hair_options.add_icon_item(icon,\"none\")
+	hair_menu_options.append(\"none\")
+	hair_options.selected = 0
+	for hair_name : String in registry.body_parts.Hair:
+		icon = load(\"res://remote_input/thumbnails/hair/\" + hair_name.to_lower() + \".png\")
+		hair_options.add_icon_item(icon,hair_name)
+		hair_menu_options.append(hair_name)
+	hair_options.item_selected.connect(hair_selected)
+		
+	label = Label.new()
 	label.text = \"Eyebrows\"
 	hair_vbox.add_child(label)
 	var eyebrow_options = OptionButton.new()
@@ -171,7 +187,7 @@ func build_menu():
 	for eyebrow_name : String in registry.body_parts.RightEyebrow:
 		var id = eyebrow_name.get_slice(\"-\",1)
 		#print(id)
-		var icon = load(\"res://remote_input/thumbnails/eyebrow\"+id+\".png\")
+		icon = load(\"res://remote_input/thumbnails/eyebrow\"+id+\".png\")
 		eyebrow_options.add_icon_item(icon,\"\")
 		eyebrow_menu_options.append(eyebrow_name)
 	eyebrow_options.selected = 11
@@ -183,13 +199,12 @@ func build_menu():
 	var eyelash_options = OptionButton.new()
 	hair_vbox.add_child(eyelash_options)
 	for i in 4:
-		var id:String = str(0)+str(i+1)
-		var icon = load(\"res://remote_input/thumbnails/eyelashes\"+id+\".png\")
-		eyelash_options.add_icon_item(icon,\"\")
+		if not i == 2: #skip the third, its the same as the second
+			var id:String = str(0)+str(i+1)
+			icon = load(\"res://remote_input/thumbnails/eyelashes\"+id+\".png\")
+			eyelash_options.add_icon_item(icon,\"\")
 	eyelash_options.item_selected.connect(eyelash_selected)
 		
-		
-	
 	var details_panel = ScrollContainer.new()
 	details_panel.name = \"Details\"
 	$Split_Screen/Menu_Options.add_child(details_panel)
@@ -282,6 +297,13 @@ func set_shapekeys(shapekey_values:Dictionary):
 	get_camera_min_max()
 	_on_zoom_slider_value_changed($Split_Screen/Right_Side/Right_Side/zoom_slider.value)
 
+func hair_selected(option_id:int):
+	var hair_name = hair_menu_options[option_id]
+	if option_id == 0:
+		humanizer.clear_body_part(\"Hair\")
+	else:
+		humanizer.set_body_part(registry.body_parts.Hair[hair_name])
+
 func eyebrow_selected(option_id:int):
 	#print(eyebrow_menu_options[option_id])
 	var eyebrow_name = eyebrow_menu_options[option_id]
@@ -292,14 +314,17 @@ func eyebrow_selected(option_id:int):
 func eyelash_selected(option_id:int):
 	var left_eyelash_name = \"LeftEyelash\"
 	var right_eyelash_name = \"RightEyelash\"
-	if option_id < 3:
-		pass
+	var material_name = \"eyelashes04.png\" #false lashes
+	if option_id < 2:
+		material_name = \"eyelashes0\" + str(option_id+1) + \".png\"
 	else:
 		left_eyelash_name = \"FalseLeftEyelash\"
 		right_eyelash_name = \"FalseRightEyelash\"
 			
 	humanizer.set_body_part(registry.body_parts.LeftEyelash[left_eyelash_name])
+	humanizer.set_body_part_material(\"LeftEyelash\",material_name)
 	humanizer.set_body_part(registry.body_parts.RightEyelash[right_eyelash_name])
+	humanizer.set_body_part_material(\"RightEyelash\",material_name)
 
 #smooth zoom, so nice wow
 func _on_zoom_slider_value_changed(value):
@@ -337,7 +362,7 @@ func _on_next_pressed():
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_qks5v"]
+[sub_resource type="Resource" id="Resource_3b60t"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -983,7 +1008,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_qks5v")
+human_config = SubResource("Resource_3b60t")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
