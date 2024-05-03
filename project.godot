@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-HumanizerGlobal="*res://humanizer_global_override.tscn"
+HumanizerGlobal="*res://addons/humanizer/scenes/humanizer_global.tscn"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/humanizer/plugin.cfg")
