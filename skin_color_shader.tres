@@ -72,7 +72,7 @@ void fragment() {
 [resource]
 render_priority = 0
 shader = SubResource("Shader_e78ch")
-shader_parameter/skin_ratios = PackedFloat32Array(0, 0, 0.25, 0, 0, 0, 0, 0, 0.75, 0, 0, 0)
+shader_parameter/skin_ratios = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0)
 shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/point_size = 1.0
 shader_parameter/roughness = 1.0
