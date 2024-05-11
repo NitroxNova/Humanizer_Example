@@ -356,13 +356,13 @@ func _on_next_pressed():
 	save_material.albedo_texture = ImageTexture.create_from_image(save_texture_image)
 	humanizer.get_node(\"Human\").set_surface_override_material(0,save_material)
 	humanizer.set_component_state(true,&'main_collider')
-	## you will want to bake in a real game, but it takes more time to generate
-	#humanizer.standard_bake()
+	## bake to merge mesh textures and surfaces
+	humanizer.standard_bake()
 	humanizer.save_human_scene(true)
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_avrfn"]
+[sub_resource type="Resource" id="Resource_frwt6"]
 script = ExtResource("2_4dnaq")
 rig = "game_engine-RETARGETED"
 shapekeys = {
@@ -951,6 +951,7 @@ body_parts = {}
 body_part_materials = {}
 clothes = []
 clothes_materials = {}
+transforms = {}
 skin_color = Color(1, 1, 1, 1)
 eye_color = Color(0.529412, 0.807843, 0.921569, 1)
 eyebrow_color = Color(0, 0, 0, 1)
@@ -1008,7 +1009,7 @@ render_target_update_mode = 4
 
 [node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_avrfn")
+human_config = SubResource("Resource_frwt6")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 0
 _animator_scene = ExtResource("3_4l5ro")
