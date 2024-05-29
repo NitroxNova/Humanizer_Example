@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://b6apa4vss8dou"]
 
-[ext_resource type="Script" path="res://addons/humanizer/scripts/humanizer.gd" id="1_l3kqe"]
-[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/human_config.gd" id="2_4dnaq"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/auto_updating_humanizer.gd" id="1_7ijj3"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/human_config.gd" id="2_xmw2h"]
 [ext_resource type="PackedScene" uid="uid://csan8bknfmodc" path="res://addons/humanizer/data/animations/animation_tree.tscn" id="3_4l5ro"]
 
 [sub_resource type="GDScript" id="GDScript_yutiq"]
 script/source = "extends Control
 
-@onready var humanizer = $Split_Screen/Right_Side/Viewport/SubViewport/Humanizer
+@onready var humanizer = $Split_Screen/Right_Side/Viewport/SubViewport/AutoUpdatingHumanizer
 var shapekey_opposites = [[\"decr\",\"incr\"], [\"down\",\"up\"],   [\"in\",\"out\"],   [\"backward\",\"forward\"],  [\"concave\",\"convex\"],  [\"compress\",\"uncompress\"], [\"square\",\"round\"], [\"pointed\",\"triangle\"]]
 var registry = HumanizerRegistry
 @onready var camera = $Split_Screen/Right_Side/Viewport/SubViewport/Camera3D
@@ -38,17 +38,26 @@ func _ready():
 	get_camera_min_max()
 
 func get_camera_min_max():
-	var middle_eyes = humanizer.get_helper_vertex_position(5063)
+	var middle_eyes = humanizer._helper_vertex[5063]
 	zoom_in_offset = middle_eyes.y 
-	var top_head = humanizer.get_helper_vertex_position(14570)
+	var top_head = humanizer._helper_vertex[5063]
 	zoom_mid_ratio = top_head.y / (zoom_out_size - zoom_in_size)
 	zoom_mid_offset = top_head.y / 2
+
+#needed or second save will have wrong skeleton and corrupted mesh
+#delete folder before saving!
+func delete_directory(path):
+	for dir_name in OSPath.get_dirs(path):
+		delete_directory(dir_name)
+	for file_name in OSPath.get_files(path):
+		DirAccess.remove_absolute(file_name)
+	DirAccess.remove_absolute(path)
 	
 func build_menu():
 	var skin_textures = HumanizerRegistry.skin_textures
 	#humanizer.reset_human()
 	#humanizer.set_skin_texture(\"middleage_caucasian_male\")
-	humanizer.get_node(\"Human\").set_surface_override_material(0,skin_shader)
+	humanizer.get_node(\"Body\").set_surface_override_material(0,skin_shader)
 	humanizer.set_shapekeys({gender=1})
 	#print(registry.body_parts.RightEye[\"RightEye-LowPolyEyeball\"])
 	humanizer.set_body_part(registry.body_parts.LeftEye[\"LeftEyeBall-LowPoly\"])
@@ -169,12 +178,12 @@ func build_menu():
 	hair_vbox.add_child(label)
 	var hair_options = OptionButton.new()
 	hair_vbox.add_child(hair_options)
-	var icon = load(\"res://remote_input/thumbnails/hair/none.png\")
+	var icon = load(\"res://assets/thumbnails/hair/none.png\")
 	hair_options.add_icon_item(icon,\"none\")
 	hair_menu_options.append(\"none\")
 	hair_options.selected = 0
 	for hair_name : String in registry.body_parts.Hair:
-		icon = load(\"res://remote_input/thumbnails/hair/\" + hair_name.to_lower() + \".png\")
+		icon = load(\"res://assets/thumbnails/hair/\" + hair_name.to_lower() + \".png\")
 		hair_options.add_icon_item(icon,hair_name)
 		hair_menu_options.append(hair_name)
 	hair_options.item_selected.connect(hair_selected)
@@ -187,7 +196,7 @@ func build_menu():
 	for eyebrow_name : String in registry.body_parts.RightEyebrow:
 		var id = eyebrow_name.get_slice(\"-\",1)
 		#print(id)
-		icon = load(\"res://remote_input/thumbnails/eyebrow\"+id+\".png\")
+		icon = load(\"res://assets/thumbnails/eyebrow\"+id+\".png\")
 		eyebrow_options.add_icon_item(icon,\"\")
 		eyebrow_menu_options.append(eyebrow_name)
 	eyebrow_options.selected = 11
@@ -201,7 +210,7 @@ func build_menu():
 	for i in 4:
 		if not i == 2: #skip the third, its the same as the second
 			var id:String = str(0)+str(i+1)
-			icon = load(\"res://remote_input/thumbnails/eyelashes\"+id+\".png\")
+			icon = load(\"res://assets/thumbnails/eyelashes\"+id+\".png\")
 			eyelash_options.add_icon_item(icon,\"\")
 	eyelash_options.item_selected.connect(eyelash_selected)
 		
@@ -354,16 +363,31 @@ func _on_next_pressed():
 	
 	save_texture_image.generate_mipmaps()
 	save_material.albedo_texture = ImageTexture.create_from_image(save_texture_image)
-	humanizer.get_node(\"Human\").set_surface_override_material(0,save_material)
+	humanizer.get_node(\"Body\").set_surface_override_material(0,save_material)
 	humanizer.set_component_state(true,&'main_collider')
 	## bake to merge mesh textures and surfaces
+	#known weirdness when saving to path that already exists, delete it early when over-writing
+	delete_directory(humanizer.save_path)
 	humanizer.standard_bake()
-	humanizer.save_human_scene(true)
+	humanizer.save_human_scene()
 	get_tree().change_scene_to_file(\"res://test_world.tscn\")
 "
 
-[sub_resource type="Resource" id="Resource_frwt6"]
-script = ExtResource("2_4dnaq")
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_f0duq"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_sm1kj"]
+sky_material = SubResource("ProceduralSkyMaterial_f0duq")
+
+[sub_resource type="Environment" id="Environment_yvgqs"]
+background_mode = 2
+sky = SubResource("Sky_sm1kj")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Resource" id="Resource_wq142"]
+script = ExtResource("2_xmw2h")
 rig = "game_engine-RETARGETED"
 shapekeys = {
 "african": 0.333,
@@ -946,7 +970,7 @@ shapekeys = {
 "universal-male-young-minmuscle-minweight": 0,
 "weight": 0.5
 }
-components = [&"main_collider"]
+components = [&"main_collider", &"lod"]
 body_parts = {}
 body_part_materials = {}
 clothes = []
@@ -956,19 +980,7 @@ skin_color = Color(1, 1, 1, 1)
 eye_color = Color(0.529412, 0.807843, 0.921569, 1)
 eyebrow_color = Color(0, 0, 0, 1)
 hair_color = Color(0.501961, 0, 0, 1)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_f0duq"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_sm1kj"]
-sky_material = SubResource("ProceduralSkyMaterial_f0duq")
-
-[sub_resource type="Environment" id="Environment_yvgqs"]
-background_mode = 2
-sky = SubResource("Sky_sm1kj")
-tonemap_mode = 2
-glow_enabled = true
+material_configs = {}
 
 [node name="New_Character" type="Control"]
 layout_mode = 3
@@ -1007,19 +1019,6 @@ handle_input_locally = false
 size = Vector2i(840, 648)
 render_target_update_mode = 4
 
-[node name="Humanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
-script = ExtResource("1_l3kqe")
-human_config = SubResource("Resource_frwt6")
-_baked_root_node = "CharacterBody3D"
-atlas_resolution = 0
-_animator_scene = ExtResource("3_4l5ro")
-_render_layers = 1
-_character_layers = 2
-_staticbody_layers = 1
-_character_mask = 3
-_ragdoll_layers = 4
-_ragdoll_mask = 5
-
 [node name="Camera3D" type="Camera3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.16017, 1)
 projection = 1
@@ -1031,6 +1030,19 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
 environment = SubResource("Environment_yvgqs")
+
+[node name="AutoUpdatingHumanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
+script = ExtResource("1_7ijj3")
+human_config = SubResource("Resource_wq142")
+_baked_root_node = "CharacterBody3D"
+atlas_resolution = 2048
+_animator_scene = ExtResource("3_4l5ro")
+_render_layers = 1
+_character_layers = 2
+_staticbody_layers = 1
+_character_mask = 3
+_ragdoll_layers = 4
+_ragdoll_mask = 5
 
 [node name="Right_Side" type="VBoxContainer" parent="Split_Screen/Right_Side"]
 layout_mode = 2

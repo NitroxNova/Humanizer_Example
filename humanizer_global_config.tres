@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_7vpba")
-asset_import_paths = Array[String](["res://addons/humanizer/data/assets/", "res://remote_input/"])
+asset_import_paths = Array[String](["res://addons/humanizer/data/assets/", "res://assets/"])
 human_export_path = "res://data/humans/"
 default_characterbody_script = "res://addons/humanizer/scripts/utils/human_controller.gd"
 default_rigidbody_script = ""

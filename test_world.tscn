@@ -8,7 +8,7 @@ script/source = "extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var human = load(\"res://data/humans/MyHuman/MyHuman.tscn\").instantiate()
+	var human = load(\"res://data/humans/MyHuman/scene_MyHuman.tscn\").instantiate()
 	human.camera = $Player_Camera
 	add_child(human)
 "
