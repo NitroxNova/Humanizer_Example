@@ -77,7 +77,7 @@ func build_menu():
 			if not shapekey_name.begins_with(\"asym-\"):
 				var base_key_name = shapekey_name
 				if shapekey_name.begins_with(\"l-\") or shapekey_name.begins_with(\"r-\"):
-					base_key_name = base_key_name.substr(2)
+					base_key_name = base_key_name.substr(2).strip_edges()
 				if base_key_name not in category_keys:
 					category_keys[base_key_name] = []
 				category_keys[base_key_name].append(shapekey_name)
@@ -224,12 +224,37 @@ func build_menu():
 		label.text = \" --- \" + category_name + \" --- \"
 		details_vbox.add_child(label)
 		category_keys = shapekey_categories[category_name]
-		for key_name in category_keys:
-			var slider = load(\"res://shapekey_slider.tscn\").instantiate()
-			slider.label_name = key_name
-			slider.shapekeys = category_keys[key_name]
-			slider.change_shapekeys.connect(set_shapekeys)
-			details_vbox.add_child(slider)
+		for key_name:String in category_keys:
+			var has_opposite = false
+			for opposite_pair in shapekey_opposites:
+				if key_name.ends_with(\"-\" + opposite_pair[0]):
+					var base_name = key_name.substr(0,key_name.length()-opposite_pair[0].length())
+					var up_name = base_name + opposite_pair[1]
+					if up_name in category_keys:
+						var slider = load(\"res://double_shapekey_slider.tscn\").instantiate()
+						slider.label_name = key_name + \" / \" + opposite_pair[1]
+						slider.shapekeys = category_keys[up_name]
+						slider.shapekeys_down = category_keys[key_name]
+						slider.change_shapekeys.connect(set_shapekeys)
+						details_vbox.add_child(slider)
+						has_opposite = true
+					else:
+						print(\"matching opposite not found \" + key_name)
+					continue
+				elif key_name.ends_with(opposite_pair[1]):
+					var base_name = key_name.substr(0,key_name.length()-opposite_pair[1].length())
+					if (base_name + opposite_pair[0]) in category_keys:
+						#key has already been matched
+						has_opposite = true
+					else:
+						print(\"matching opposite not found \" + key_name)
+					continue
+			if not has_opposite:
+				var slider = load(\"res://shapekey_slider.tscn\").instantiate()
+				slider.label_name = key_name
+				slider.shapekeys = category_keys[key_name]
+				slider.change_shapekeys.connect(set_shapekeys)
+				details_vbox.add_child(slider)
 
 func update_skin_texture():
 	var ratios = get_skin_color_ratios()
