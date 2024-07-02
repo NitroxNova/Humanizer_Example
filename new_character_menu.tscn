@@ -348,9 +348,9 @@ func eyebrow_selected(option_id:int):
 func eyelash_selected(option_id:int):
 	var left_eyelash_name = \"LeftEyelash\"
 	var right_eyelash_name = \"RightEyelash\"
-	var material_name = \"eyelashes04.png\" #false lashes
+	var material_name = \"eyelashes04\" #false lashes
 	if option_id < 2:
-		material_name = \"eyelashes0\" + str(option_id+1) + \".png\"
+		material_name = \"eyelashes0\" + str(option_id+1) 
 	else:
 		left_eyelash_name = \"FalseLeftEyelash\"
 		right_eyelash_name = \"FalseRightEyelash\"
