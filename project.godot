@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Humanizer Example Menu"
 run/main_scene="res://new_character_menu.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -22,3 +22,7 @@ HumanizerGlobal="*res://addons/humanizer/scenes/humanizer_global.tscn"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/humanizer/plugin.cfg")
+
+[filesystem]
+
+import/blender/enabled=false

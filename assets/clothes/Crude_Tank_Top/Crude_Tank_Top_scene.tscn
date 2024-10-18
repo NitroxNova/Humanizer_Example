@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://dscmo2arf5c1b"]
-
-[ext_resource type="ArrayMesh" uid="uid://bn8y7vucy2pte" path="res://assets/clothes/Crude_Tank_Top/Crude_Tank_Top_mesh.res" id="1_3k21n"]
-[ext_resource type="Material" uid="uid://s40u2kg20cmv" path="res://assets/clothes/Crude_Tank_Top/Crude_Tank_Top_material.res" id="2_jmbeu"]
-
-[node name="Crude_Tank_Top" type="MeshInstance3D"]
-mesh = ExtResource("1_3k21n")
-surface_material_override/0 = ExtResource("2_jmbeu")
