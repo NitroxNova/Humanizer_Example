@@ -5,7 +5,7 @@ feature demo - https://youtu.be/X9KnojmjFpQ
 SETUP INSTRUCTIONS  
 using clone command:  
 git clone --recurse-submodules https://github.com/NitroxNova/humanizer_example  
-or if download the zip, run:  
-git submodule update --init --recursive  
+  
+or you can download the zips for both the menu and the humanizer addon, and manually place it in the addons folder.  
 
 then open with godot 4.3 and click play button to run new_character_menu.tscn  
