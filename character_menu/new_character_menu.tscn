@@ -1,11 +1,11 @@
 [gd_scene load_steps=23 format=3 uid="uid://b6apa4vss8dou"]
 
-[ext_resource type="Script" path="res://addons/humanizer/scripts/utils/humanizer_editor_tool.gd" id="1_7ijj3"]
-[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/humanizer_overlay.gd" id="2_7hcgc"]
-[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/human_config.gd" id="2_xmw2h"]
-[ext_resource type="PackedScene" uid="uid://csan8bknfmodc" path="res://addons/humanizer/data/animations/animation_tree.tscn" id="3_4l5ro"]
-[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/humanizer_material.gd" id="3_obugo"]
-[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/equipment.gd" id="4_qusvo"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/utils/humanizer_editor_tool.gd" id="1_k00w4"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/humanizer_overlay.gd" id="2_lpkhh"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/humanizer_material.gd" id="3_dbty2"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/equipment.gd" id="4_vcoil"]
+[ext_resource type="Script" path="res://addons/humanizer/scripts/resources/human_config.gd" id="5_ynnpu"]
+[ext_resource type="PackedScene" uid="uid://csan8bknfmodc" path="res://addons/humanizer/data/animations/animation_tree.tscn" id="6_0lay0"]
 
 [sub_resource type="GDScript" id="GDScript_yutiq"]
 script/source = "extends Control
@@ -23,7 +23,7 @@ var zoom_mid_ratio = 0
 var zoom_mid_offset = 0
 var eyebrow_menu_options = []
 var hair_menu_options = []
-var skin_shader : ShaderMaterial = load(\"res://skin_color_shader.tres\")
+var skin_shader : ShaderMaterial = load(\"res://character_menu/skin_color_shader.tres\")
 var age = 50
 var gender = \"male\"
 var skin_color_ratio = 0.0
@@ -124,7 +124,7 @@ func build_menu():
 	
 	var category_keys = shapekey_categories[\"Macro\"]	
 	for key_name in category_keys:
-		var slider = load(\"res://shapekey_slider.tscn\").instantiate()
+		var slider = load(\"res://character_menu/shapekey_slider.tscn\").instantiate()
 		slider.label_name = key_name
 		slider.shapekeys = category_keys[key_name]
 		slider.set_value(50)
@@ -137,7 +137,7 @@ func build_menu():
 	
 	category_keys = shapekey_categories[\"Race\"]	
 	for key_name in category_keys:
-		var slider = load(\"res://shapekey_slider.tscn\").instantiate()
+		var slider = load(\"res://character_menu/shapekey_slider.tscn\").instantiate()
 		slider.label_name = key_name
 		slider.shapekeys = category_keys[key_name]
 		slider.set_value(33)
@@ -232,7 +232,7 @@ func build_menu():
 					var base_name = key_name.substr(0,key_name.length()-opposite_pair[0].length())
 					var up_name = base_name + opposite_pair[1]
 					if up_name in category_keys:
-						var slider = load(\"res://double_shapekey_slider.tscn\").instantiate()
+						var slider = load(\"res://character_menu/double_shapekey_slider.tscn\").instantiate()
 						slider.label_name = key_name + \" / \" + opposite_pair[1]
 						slider.shapekeys = category_keys[up_name]
 						slider.shapekeys_down = category_keys[key_name]
@@ -251,7 +251,7 @@ func build_menu():
 						print(\"matching opposite not found \" + key_name)
 					continue
 			if not has_opposite:
-				var slider = load(\"res://shapekey_slider.tscn\").instantiate()
+				var slider = load(\"res://character_menu/shapekey_slider.tscn\").instantiate()
 				slider.label_name = key_name
 				slider.shapekeys = category_keys[key_name]
 				slider.change_shapekeys.connect(set_shapekeys)
@@ -409,9 +409,9 @@ sky = SubResource("Sky_sm1kj")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="Resource" id="Resource_x4lb0"]
+[sub_resource type="Resource" id="Resource_ada36"]
 resource_name = "middleage_african_male"
-script = ExtResource("2_7hcgc")
+script = ExtResource("2_lpkhh")
 albedo_texture_path = "res://addons/humanizer/data/assets/body_parts/Body/Default/young_caucasian_male/young_caucasian_male_diffuse.png"
 normal_texture_path = ""
 ao_texture_path = ""
@@ -419,20 +419,20 @@ color = Color(1, 1, 1, 1)
 offset = Vector2i(0, 0)
 normal_strength = 1.0
 
-[sub_resource type="Resource" id="Resource_o8owa"]
+[sub_resource type="Resource" id="Resource_5wh55"]
 resource_local_to_scene = true
-script = ExtResource("3_obugo")
-overlays = Array[ExtResource("2_7hcgc")]([SubResource("Resource_x4lb0")])
+script = ExtResource("3_dbty2")
+overlays = Array[ExtResource("2_lpkhh")]([SubResource("Resource_ada36")])
 
 [sub_resource type="Resource" id="Resource_u3rrb"]
-script = ExtResource("4_qusvo")
+script = ExtResource("4_vcoil")
 type = "DefaultBody"
 texture_name = "young_caucasian_male_diffuse"
-material_config = SubResource("Resource_o8owa")
+material_config = SubResource("Resource_5wh55")
 
 [sub_resource type="Resource" id="Resource_4xnnl"]
 resource_name = "eyeball"
-script = ExtResource("2_7hcgc")
+script = ExtResource("2_lpkhh")
 albedo_texture_path = "res://addons/humanizer/data/assets/body_parts/Eyes/Eyeballs/eyeball_albedo.png"
 normal_texture_path = ""
 ao_texture_path = ""
@@ -442,7 +442,7 @@ normal_strength = 1.0
 
 [sub_resource type="Resource" id="Resource_ekkbc"]
 resource_name = "overlay_iris"
-script = ExtResource("2_7hcgc")
+script = ExtResource("2_lpkhh")
 albedo_texture_path = "res://addons/humanizer/data/assets/body_parts/Eyes/Eyeballs/overlay_iris_albedo.png"
 normal_texture_path = ""
 ao_texture_path = ""
@@ -452,18 +452,18 @@ normal_strength = 1.0
 
 [sub_resource type="Resource" id="Resource_8h6dh"]
 resource_local_to_scene = true
-script = ExtResource("3_obugo")
-overlays = Array[ExtResource("2_7hcgc")]([SubResource("Resource_4xnnl"), SubResource("Resource_ekkbc")])
+script = ExtResource("3_dbty2")
+overlays = Array[ExtResource("2_lpkhh")]([SubResource("Resource_4xnnl"), SubResource("Resource_ekkbc")])
 
 [sub_resource type="Resource" id="Resource_j8bqg"]
-script = ExtResource("4_qusvo")
+script = ExtResource("4_vcoil")
 type = "LeftEyeBall-LowPoly"
 texture_name = "eyeball_albedo"
 material_config = SubResource("Resource_8h6dh")
 
 [sub_resource type="Resource" id="Resource_ukguk"]
 resource_name = "eyeball"
-script = ExtResource("2_7hcgc")
+script = ExtResource("2_lpkhh")
 albedo_texture_path = "res://addons/humanizer/data/assets/body_parts/Eyes/Eyeballs/eyeball_albedo.png"
 normal_texture_path = ""
 ao_texture_path = ""
@@ -473,7 +473,7 @@ normal_strength = 1.0
 
 [sub_resource type="Resource" id="Resource_nto0t"]
 resource_name = "overlay_iris"
-script = ExtResource("2_7hcgc")
+script = ExtResource("2_lpkhh")
 albedo_texture_path = "res://addons/humanizer/data/assets/body_parts/Eyes/Eyeballs/overlay_iris_albedo.png"
 normal_texture_path = ""
 ao_texture_path = ""
@@ -483,17 +483,17 @@ normal_strength = 1.0
 
 [sub_resource type="Resource" id="Resource_mm87q"]
 resource_local_to_scene = true
-script = ExtResource("3_obugo")
-overlays = Array[ExtResource("2_7hcgc")]([SubResource("Resource_ukguk"), SubResource("Resource_nto0t")])
+script = ExtResource("3_dbty2")
+overlays = Array[ExtResource("2_lpkhh")]([SubResource("Resource_ukguk"), SubResource("Resource_nto0t")])
 
 [sub_resource type="Resource" id="Resource_t2q4f"]
-script = ExtResource("4_qusvo")
+script = ExtResource("4_vcoil")
 type = "RightEyeball-LowPoly"
 texture_name = "eyeball_albedo"
 material_config = SubResource("Resource_mm87q")
 
 [sub_resource type="Resource" id="Resource_ivk6y"]
-script = ExtResource("2_xmw2h")
+script = ExtResource("5_ynnpu")
 rig = "game_engine-RETARGETED"
 targets = {
 "african": 0.333333,
@@ -586,11 +586,11 @@ shadow_enabled = true
 environment = SubResource("Environment_yvgqs")
 
 [node name="AutoUpdatingHumanizer" type="Node3D" parent="Split_Screen/Right_Side/Viewport/SubViewport"]
-script = ExtResource("1_7ijj3")
+script = ExtResource("1_k00w4")
 human_config = SubResource("Resource_ivk6y")
 _baked_root_node = "CharacterBody3D"
 atlas_resolution = 2048
-_animator_scene = ExtResource("3_4l5ro")
+_animator_scene = ExtResource("6_0lay0")
 _render_layers = 1
 _character_layers = 2
 _staticbody_layers = 1

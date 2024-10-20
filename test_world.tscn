@@ -1,6 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dlrwc0edbx73n"]
-
-[ext_resource type="PackedScene" uid="uid://de62ocho8filt" path="res://player_camera.tscn" id="1_74jvd"]
+[gd_scene load_steps=6 format=3 uid="uid://dlrwc0edbx73n"]
 
 [sub_resource type="GDScript" id="GDScript_lm4lb"]
 script/source = "extends Node3D
@@ -45,5 +43,5 @@ use_collision = true
 size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_pgi2k")
 
-[node name="Player_Camera" parent="." instance=ExtResource("1_74jvd")]
+[node name="Player_Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)

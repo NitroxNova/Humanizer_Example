@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b6ev2l6eqac40"]
 
-[ext_resource type="Script" path="res://shapekey_slider.gd" id="1_mr07m"]
+[ext_resource type="Script" path="res://character_menu/shapekey_slider.gd" id="1_mr07m"]
 
 [node name="Shapekey_Slider" type="VBoxContainer"]
 offset_right = 72.0
